@@ -1,8 +1,12 @@
 from selenium.webdriver.common.by import By
 from time import sleep
+import smtplib
+import os
+from email.message import EmailMessage
 from src import init_driver
 
-
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 
 driver = init_driver()
@@ -42,9 +46,23 @@ d_a_c = condicao(3)
 d_d_a_c = condicao(4)
 
 
-print(f"Amanha: {a_t} {a_c}  \n Depois de amanha:  {d_a_t} {d_a_c}  \n Depois de depois de amanha: {d_d_a_t} {d_d_a_c} " )
+#Criar o email
+mail = EmailMessage()
+mail['Subject'] = 'Previsão do Tempo'
+mensagem = f"Previsão do Tempo para o Rio de Janeiro \n Amanha: {a_t} {a_c}\n Depois de amanha:  {d_a_t} {d_a_c} \n Depois de depois de amanha: {d_d_a_t} {d_d_a_c} "
+mail['From'] = EMAIL_ADDRESS
+mail['To'] = 'igorsmh@hotmail.com'
+mail.add_header('Content-Type', 'text/html')
+mail.set_payload(mensagem.encode('utf-8'))
 
 
+#Enviar o email
+def enviar_email(mail):
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as email:
+        email.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        email.send_message(mail)
 
-input('')
-driver.close()
+
+enviar_email(mail)
+
+driver.quit()
