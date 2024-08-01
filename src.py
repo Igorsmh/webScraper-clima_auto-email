@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 
 def init_driver():
@@ -35,3 +36,25 @@ def init_driver():
     # inicializando o webdriver
     driver = webdriver.Chrome(options=chrome_options)
     return driver
+
+
+
+def max_min(dia):
+
+    elementos = driver.find_elements(By.XPATH, f"//ul[@class='grid-container-7 dias_w']/li[@class='grid-item dia d{dia}']/span/span")
+    max_min = elementos[3].text
+    return max_min
+
+
+
+def condicao(dia):
+
+    elementos = driver.find_elements(By.XPATH, f"//ul[@class='grid-container-7 dias_w']/li[@class='grid-item dia d{dia}']/span/img")
+    condicao = elementos[0].get_attribute('alt')
+    return condicao
+
+
+def enviar_email(mail):
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as email:
+        email.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        email.send_message(mail)
