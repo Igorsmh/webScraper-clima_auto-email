@@ -1,13 +1,11 @@
 from selenium.webdriver.common.by import By
 from time import sleep
-import smtplib
 import os
 from email.message import EmailMessage
-
 from src import *
 
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
 
 
 driver = init_driver()
@@ -47,4 +45,3 @@ mail.set_payload(mensagem.encode('utf-8'))
 #Enviar o email
 enviar_email(mail)
 
-driver.quit()
