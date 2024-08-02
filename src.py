@@ -1,7 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import smtplib
+import os
+import schedule
+from time import sleep
 
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 def init_driver():
     # Fonte de opções de switches https://chromium.googlesource.com/chromium/src/+/master/chrome/common/chrome_switches.cc e  https://peter.sh/experiments/chromium-command-line-switches/
@@ -41,6 +47,7 @@ def init_driver():
 
 def max_min(dia):
 
+    driver = init_driver()
     elementos = driver.find_elements(By.XPATH, f"//ul[@class='grid-container-7 dias_w']/li[@class='grid-item dia d{dia}']/span/span")
     max_min = elementos[3].text
     return max_min
@@ -49,6 +56,7 @@ def max_min(dia):
 
 def condicao(dia):
 
+    driver = init_driver()
     elementos = driver.find_elements(By.XPATH, f"//ul[@class='grid-container-7 dias_w']/li[@class='grid-item dia d{dia}']/span/img")
     condicao = elementos[0].get_attribute('alt')
     return condicao
@@ -58,3 +66,14 @@ def enviar_email(mail):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as email:
         email.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         email.send_message(mail)
+
+
+def agendar_email():
+    
+    schedule.every(1).days.at("10:00").do(enviar_email)
+
+    while True:
+        schedule.run_pending()
+        sleep(1)
+
+
